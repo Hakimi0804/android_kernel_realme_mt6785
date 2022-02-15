@@ -35,7 +35,7 @@ MTK_PLATFORM := $(subst ",,$(CONFIG_MTK_PLATFORM))
 MTK_PROJECT := $(subst ",,$(CONFIG_ARCH_MTK_PROJECT))
 MTK_CUSTOM_PATH := $(srctree)/drivers/misc/mediatek
 
-ifeq ($(CONFIG_MTK_PLATFORM),"mt6785")
+ifeq ($(CONFIG_MTK_PLATFORM),"mt6771")
     subdir-ccflags-y += -DOPLUS_PLATFORM_MT6771
 endif
 
