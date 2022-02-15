@@ -47,6 +47,7 @@
 #define OPLUS_FEATURE_CAMERA_COMMON
 #endif
 
+#define OPLUS_PLATFORM_MT6771
 #ifdef OPLUS_PLATFORM_MT6771
 /*Feng.Hu@Camera.Driver 20171215 add to control flashlight via proc file*/
 #include<linux/proc_fs.h>
@@ -571,16 +572,16 @@ EXPORT_SYMBOL(strobe_VDIrq);
 #ifdef OPLUS_PLATFORM_MT6771
 /*weiriqin@camera.driver on 20190616, debug flashlight use mt6370 pmic first time*/
 #ifndef CONFIG_MTK_FLASHLIGHT_MT6370
-extern int mp3331_readReg(int reg);
-extern int lm3642_readReg(int reg);
+// extern int mp3331_readReg(int reg);
+// extern int lm3642_readReg(int reg);
 /*Yijun.Tan@Camera.Driver, 2017/12/06  add new flashlight driver ic aw3642*/
-extern int aw3642_readReg(int reg);
+// extern int aw3642_readReg(int reg);
 #endif /* CONFIG_MTK_FLASHLIGHT_MT6370 */
 
 /*Yijun.Tan@Camera modify for can not read deivce id in factory mode 20180321*/
-extern int kdVIOPowerOn( int On);
+// extern int kdVIOPowerOn( int On);
 /*weiriqin@camera.driver on 20190516, debug flashlight use mt6370 pmic first time*/
-#ifndef CONFIG_MTK_FLASHLIGHT_MT6370
+#ifdef CONFIG_MTK_FLASHLIGHT_MT6370
 static int part_id = -1;
 int strobe_getPartId(int sensorDev, int strobeId)
 {
@@ -589,7 +590,7 @@ int strobe_getPartId(int sensorDev, int strobeId)
 	if (part_id != -1) {
 		return part_id;
 	}
-	kdVIOPowerOn(1);
+	// kdVIOPowerOn(1);
 	if (sensorDev == 1 && strobeId == 1) {
 		if (lm3642_readReg(0x00) == 0){
 			part_id = 0;
@@ -609,7 +610,7 @@ int strobe_getPartId(int sensorDev, int strobeId)
 		part_id = 0;
 	}
 	/*Yijun.Tan@Camera add for can not read deivce id in factory mode 20180321*/
-	kdVIOPowerOn(0);
+	// kdVIOPowerOn(0);
 	pr_err("strobe_getPartId part_id = %d \n", part_id);
 	return part_id;
 }
@@ -675,7 +676,7 @@ static ssize_t FL_HW_WRITE( struct file *file, const char __user *buffer, size_t
 		} else {
 			pr_info("Failed with no flashlight ops\n");
 		}
-		kdVIOPowerOn(0);
+		// kdVIOPowerOn(0);
 		pr_err("sensor is poweron ,need to set flash off\n");
 		return count;
 	}
@@ -705,9 +706,9 @@ static ssize_t FL_HW_WRITE( struct file *file, const char __user *buffer, size_t
 			pr_info("set driver 0");
 		}
 		#endif
-		kdVIOPowerOn(0);
+		// kdVIOPowerOn(0);
 	} else if (regBuf[0] == '1') {
-		kdVIOPowerOn(1);
+		// kdVIOPowerOn(1);
 
 		fl_dev_arg.channel = fdev->dev_id.channel;
 		if (fdev->ops) {
@@ -722,7 +723,7 @@ static ssize_t FL_HW_WRITE( struct file *file, const char __user *buffer, size_t
 			fdev->ops->flashlight_ioctl(FLASH_IOC_SET_TIME_OUT_TIME_MS, (unsigned long)&fl_dev_arg);
 		} else {
 			pr_info("Failed with no flashlight ops\n");
-			kdVIOPowerOn(0);
+			// kdVIOPowerOn(0);
 			return -EFAULT;
 		}
 		fl_dev_arg.arg = 1;
